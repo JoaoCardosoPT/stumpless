@@ -29,10 +29,20 @@ main( int argc, char **argv ) {
   // opens a file target to example.log
   file_target = stumpless_open_file_target( "example.log" );
 
+  // If the file was not able to open
+  if( file_target == NULL ) {
+    stumpless_perror( "Not possible to open example.log" );
+    stumpless_free_all(  );
+    return EXIT_FAILURE;
+  }
 
-  // logs to the last opened target
-  stump( "The hello world of stumpless." );
-
+  // logs to the last opened target and checks for failure
+  if( stump( "The hello world of stumpless." ) < 0 ) {
+    stumpless_perror( "Not possible to write the log" );
+    stumpless_close_file_target( file_target );
+    stumpless_free_all(  );
+    return EXIT_FAILURE;
+  }
 
   // logs a more complex message to the last target
   stump( "Login failed for username %s", username );
